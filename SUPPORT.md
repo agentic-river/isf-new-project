@@ -1,19 +1,37 @@
-# Support & Feedback for ISF New Project Template
+# Support & Feedback for ISF-Core
 
-This repository is the official standalone starter template and local orchestration workspace for the [Infinite Software Factory (ISF)](https://github.com/agentic-river/isf-core).
+Welcome to the Infinite Software Factory (ISF)! We are thrilled to have you here.
 
 ## 🔒 Proprietary & Closed-Source Notice
-To ensure absolute stability, security, and unified versioning across all developer workspaces, this template repository is maintained directly by the ISF core team.
-* We do **not** accept direct code contributions or Pull Requests to this template repository.
-* If you have custom scripts, background tasks, or rules that you believe should be built into the standard template, please suggest them as a feature request!
+Please note that ISF-Core is a **proprietary, closed-source product**. 
+* We do **not** accept direct code contributions or Pull Requests to this repository.
+* The core agent engine is distributed as a pre-compiled, secure Docker image (`donalldoo/isf-factory`) on Docker Hub.
+
+However, we are fully committed to supporting our users, listening to your ideas, and improving the factory!
 
 ---
 
-## 🐛 How to Get Support
-Since this workspace connects directly to the core ISF Docker engine, all support issues, bug reports, and features are handled centrally in our main repository:
+## 🐛 How to Report Bugs
+If you encounter any bugs, setup errors, system crashes, or unexpected agent behaviors, please open an issue in our **[GitHub Issues](https://github.com/agentic-river/isf-core/issues)** tab.
 
-* **Bug Reports:** If a setup script, compose configuration, or local database mount fails, please search for or open an issue on the **[Main ISF-Core Issues Page](https://github.com/agentic-river/isf-core/issues)**.
-* **Feature Ideas:** Tell us what default integrations (e.g., specific databases, third-party portals, custom rulesets) you would like to see supported out-of-the-box in future template updates!
-* **General Questions:** Share your setups and ask questions on the main repository discussions tab.
+When reporting a bug, please include:
+1. **Host Environment:** Your OS (macOS, Windows/WSL2, Linux, etc.) and hardware details (e.g., Apple M-Series, Intel).
+2. **Runtime Context:** Your Docker Desktop/Engine version and Python version.
+3. **Execution Logs:** Relevant stdout or container logs from the affected components (`docker compose logs backend` or `docker compose logs ai-proxy`).
+4. **Reproduction Steps:** Concise steps and example prompts showing how to reproduce the error.
+
+---
+
+## 💡 Feature Requests & Ideas
+Do you have an idea for a new automation task, specialized rules template, third-party platform integration (e.g., databases, portals), or model routing optimization? 
+
+We love community suggestions! Please submit feature requests via our **[GitHub Issues Page](https://github.com/agentic-river/isf-core/issues)** using the **Feature Request** template.
+
+---
+
+## 🛡️ Security Vulnerabilities
+If you discover a security vulnerability, please **DO NOT** open a public issue. Doing so exposes users to potential exploits before a patch can be deployed.
+
+Please report all security vulnerabilities privately by emailing **security@agenticriver.com**. We will investigate and respond within 48 hours.
 
 Thank you for building with ISF! 🚀

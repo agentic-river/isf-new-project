@@ -21,13 +21,11 @@ services:
       start_period: 10s
     working_dir: /workspace
     volumes:
-      # 1. The Workspace: Where ISF builds YOUR app
+      # 1. The Workspace: Where ISF builds YOUR app (includes /workspace/data for DB, logs, temp)
       - ./:/workspace
       # 2. The Engine: Allowing ISF to spawn Dev/Stage/Prod containers
       - /var/run/docker.sock:/var/run/docker.sock
       - /etc/localtime:/etc/localtime:ro # SYNC HOST TIMEZONE
-      # 3. Memory: Persistent storage lives under /workspace/data
-      #    (./:/workspace bind-mount covers ./data/ → /workspace/data)
     environment:
       - PYTHONPATH=/app:/workspace
       # --- SHARED INFRASTRUCTURE (Running on Host) ---
