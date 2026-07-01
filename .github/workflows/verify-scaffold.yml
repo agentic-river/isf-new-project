@@ -1,0 +1,29 @@
+name: Verify Scaffold Integrity
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+
+    - name: Run Python Syntax Check
+      run: |
+        python -m py_compile setup.py start_isf_core.py shutdown_isf_core.py backend/tasks/*.py browser-agents/*.py
+
+    - name: Validate Docker Compose Configuration
+      run: |
+        docker compose -f compose.yml config
+        docker compose -f compose.mac.yml config
+        docker compose -f ai-proxy.yml config
