@@ -1,22 +1,15 @@
 import asyncio
 import logging
-import os
-import sys
 import time
 from typing import Optional
 
-# Ensure the project root is on sys.path so backend.* imports work
-_project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if _project_root not in sys.path:
-    sys.path.insert(0, _project_root)
+from backend.server.state import global_state
+from backend.core.chat_storage import ChatStorage
+from backend.core.chat_helpers import _prepare_genai_history
+from backend.core.engine import EventBus
+from backend.server.websocket_manager import broadcast_message_to_websockets_sync
 
-from backend.server.state import global_state  # noqa: E402
-from backend.core.chat_storage import ChatStorage  # noqa: E402
-from backend.core.chat_helpers import _prepare_genai_history  # noqa: E402
-from backend.core.engine import EventBus  # noqa: E402
-from backend.server.websocket_manager import broadcast_message_to_websockets_sync  # noqa: E402
-
-logging.basicConfig(level=logging.INFO, stream=sys.stdout)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("auto_agent_task")
 
 AUTO_AGENT_TASK_NAME = "Auto Agent Task"

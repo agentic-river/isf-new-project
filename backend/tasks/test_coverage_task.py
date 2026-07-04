@@ -2,21 +2,14 @@ import asyncio
 import glob
 import logging
 import os
-import sys
 import time
 import requests
 from typing import Optional, List, Dict, Any
 
-# Ensure the project root is on sys.path so backend.* imports work
-_project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if _project_root not in sys.path:
-    sys.path.insert(0, _project_root)
+from backend.core.sonar_tools import SonarQubeTools
+from backend.core.testing_tools.main import TestingTools
+from backend.server.state import global_state
 
-from backend.core.sonar_tools import SonarQubeTools  # noqa: E402
-from backend.core.testing_tools.main import TestingTools  # noqa: E402
-from backend.server.state import global_state  # noqa: E402
-
-logging.basicConfig(level=logging.INFO, stream=sys.stdout)
 logger = logging.getLogger("test_coverage_task")
 
 
@@ -48,13 +41,6 @@ async def invoke_ai_agent(prompt: str, role: str) -> str:
             "to prevent the test runner from freezing."
         )
 
-    # Include Workspace Safety Protocol
-    system_instruction += (
-        "\n\nCRITICAL: You MUST strictly adhere to @rules/Workspace_Safety_Protocol.md. "
-        "Never run destructive git commands (e.g., git restore, git clean, git reset) that could "
-        "discard untracked or uncommitted changes made by concurrent AI agents or human developers."
-    )
-
     # Instantiate the same ReAct Chat Session used by the Chat UI
     chat = global_state.client.create(
         model_role=role,
@@ -75,11 +61,10 @@ def _should_include_for_coverage(path: str) -> bool:
     """Helper to filter files that should be considered for coverage."""
     if not path:
         return False
-    # Allow all Python source modules and frontend source files
-    valid_py_prefixes = ("backend/", "ai_proxy/", "ai_manager/", "cron_tasks/", "browser-agents/")
-    is_python = any(path.startswith(p) for p in valid_py_prefixes) and path.endswith(".py")
+    # Allow backend Python source files or frontend source files (React/TypeScript)
+    is_backend = path.startswith("backend/") and path.endswith(".py")
     is_frontend = path.startswith("frontend/src/") and path.endswith((".js", ".jsx", ".ts", ".tsx"))
-    if not (is_python or is_frontend):
+    if not (is_backend or is_frontend):
         return False
     # Exclude files where any parent folder is named "tests"
     if "tests" in path.split('/'):
@@ -217,7 +202,7 @@ async def _improve_target_file_coverage(
     test_exists: bool
 ) -> None:
     """Single-step AI-orchestrated workflow: improve testing coverage."""
-    logger.info("Improving testing coverage for %s -> %s", target_file, test_file_path)
+    logger.info("Improving testing coverage for %s → %s", target_file, test_file_path)
     improve_prompt = (
         f"Improve the testing coverage for the source file `{target_file}` "
         f"and save the improved test suite at `{test_file_path}`. "
@@ -239,9 +224,12 @@ async def _process_coverage_pool(
     pool_size: int = 30,
     max_workers: int = 2
 ) -> None:
-    """Work-queue pool: fetches a pool with pipeline-isolated coverage dirs."""
-    os.environ.setdefault("PIPELINE_MODE", "cron_coverage")
-    os.environ.setdefault("RUN_ID", f"cron_cov_{int(time.time())}")
+    """Work-queue pool: fetches a pool of 30 low-coverage files once, then 2 persistent
+    workers pull files from a shared queue until all are processed.
+
+    Each worker runs a single AI-orchestrated step to improve testing coverage.
+    The AI agent self-manages the build → test → fix cycle internally.
+    """
     # 1. Fetch the pool of 30 low-coverage files ONCE
     pool_files = await asyncio.to_thread(_get_low_coverage_files, sonar_tools, 90.0, pool_size)
     if not pool_files:
@@ -255,7 +243,7 @@ async def _process_coverage_pool(
     for f in pool_files:
         await queue.put(f)
 
-    # 3. Persistent worker: pull -> improve -> repeat until queue is empty
+    # 3. Persistent worker: pull → improve → repeat until queue is empty
     async def _worker() -> None:
         while True:
             try:
@@ -351,8 +339,3 @@ async def run_test_coverage_workflow(log_id: Optional[int] = None):
 
     finally:
         _finalize_coverage_job(start_time, log_id)
-
-
-if __name__ == "__main__":
-    # Standard entry point when invoked via ISOLATED_PROCESS
-    asyncio.run(run_test_coverage_workflow())

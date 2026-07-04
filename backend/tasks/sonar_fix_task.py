@@ -2,18 +2,11 @@ import asyncio
 import glob
 import logging
 import os
-import sys
 import time
 from typing import Optional
-
-# Ensure the project root is on sys.path so backend.* imports work
-_project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if _project_root not in sys.path:
-    sys.path.insert(0, _project_root)
-
-from backend.core.sonar_tools import SonarQubeTools  # noqa: E402
-from backend.core.devops_tools import DevOpsTools  # noqa: E402
-from backend.server.state import global_state  # noqa: E402
+from backend.core.sonar_tools import SonarQubeTools
+from backend.core.devops_tools import DevOpsTools
+from backend.server.state import global_state
 
 logger = logging.getLogger("sonar_fix_task")
 
@@ -24,15 +17,9 @@ async def invoke_ai_agent(prompt: str, role: str) -> str:
     full_prompt = f"Role: {role}\n\n{prompt}" if role else prompt
 
     # Instantiate the same ReAct Chat Session used by the Chat UI
-    system_instruction = (
-        "You are an autonomous background process.\n\n"
-        "CRITICAL: You MUST strictly adhere to @rules/Workspace_Safety_Protocol.md. "
-        "Never run destructive git commands (e.g., git restore, git clean, git reset) that could "
-        "discard untracked or uncommitted changes made by concurrent AI agents or human developers."
-    )
     chat = global_state.client.create(
         model_role=role,
-        system_instruction=system_instruction,
+        system_instruction="You are an autonomous background process.",
         tools=global_state.tools,
         dry_run=False
     )
@@ -222,9 +209,6 @@ def _finalize_sonar_job(start_time: float, log_id: Optional[int] = None):
     logger.info("Sonar fix workflow completed.")
 
 async def run_sonar_fix_workflow(log_id: Optional[int] = None):
-
-    os.environ.setdefault("PIPELINE_MODE", "cron_fix")
-    os.environ.setdefault("RUN_ID", f"cron_fix_{int(time.time())}")
     start_time = time.time()
     try:
         global_state.settings.reload_models_config()
@@ -245,8 +229,3 @@ async def run_sonar_fix_workflow(log_id: Optional[int] = None):
 
     finally:
         _finalize_sonar_job(start_time, log_id)
-
-
-if __name__ == "__main__":
-    # Standard entry point when invoked via ISOLATED_PROCESS
-    asyncio.run(run_sonar_fix_workflow())
