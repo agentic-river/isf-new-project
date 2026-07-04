@@ -19,7 +19,7 @@
 
 This is the **official project starter template** for the [Infinite Software Factory (ISF)](https://github.com/agentic-river/isf-core). 
 
-Instead of downloading the entire ISF source code, this template contains **only the configuration and orchestration layers** you need to manage your own projects. The actual core engine executes inside pre-compiled, secure Docker images (`donalldoo/isf-factory` and `donalldoo/ai-proxy-server`) pulled automatically from Docker Hub.
+Instead of downloading the entire ISF source code, this template contains **only the configuration and orchestration layers** you need to manage your own projects. The actual core engine executes inside pre-compiled, secure Docker images (`agenticriver/isf-factory` and `agenticriver/ai-proxy-server`) pulled automatically from Docker Hub.
 
 ### Why use this template?
 1. **Isolated Projects:** Create a brand new, clean repository for every separate application you build.
