@@ -19,12 +19,26 @@
 
 This is the **official project starter template** for the [Infinite Software Factory (ISF)](https://github.com/agentic-river/isf-core). 
 
-Instead of downloading the entire ISF source code, this template contains **only the configuration and orchestration layers** you need to manage your own projects. The actual core engine executes inside pre-compiled, secure Docker images (`agenticriver/isf-factory` and `agenticriver/ai-proxy-server`) pulled automatically from Docker Hub.
+Instead of downloading the entire ISF source code, this template contains **only the configuration and orchestration layers** you need to manage your own projects. The actual core engine executes inside pre-compiled, secure Docker images (`donalldoo/isf-factory` and `donalldoo/ai-proxy-server`) pulled automatically from Docker Hub.
 
 ### Why use this template?
 1. **Isolated Projects:** Create a brand new, clean repository for every separate application you build.
 2. **Local Volume Mapping:** Your code, specifications, and databases stay 100% local on your disk.
 3. **Frictionless Onboarding:** Just click **"Use this template"**, run the setup script, and start coding with AI in minutes.
+
+---
+
+## Prerequisites
+
+Before getting started, ensure your system meets the following requirements:
+
+1. **Operating System:** Windows 11 with WSL2 (Ubuntu) OR macOS (M1 chip or later)
+   - **RAM:** At least 16 GB (recommended)
+   - **Storage:** At least 10 GB free SSD space (recommended)
+2. **Docker Desktop:** Installed and running
+   - _Tip: We highly recommend increasing your Docker Desktop resource limits (at least 4-6 dedicated CPU cores and 8GB+ RAM) to ensure the AI orchestration engine and parallel workers run smoothly._
+3. **Git:** Installed
+4. **Python:** 3.12 (recommended)
 
 ---
 
@@ -53,6 +67,8 @@ nano .env.ai_proxy
 code .env.ai_proxy
 ```
 
+_Note: You can also setup the model roles and routing in `models.yaml`._
+
 ### Step 3: Run Setup & Launch
 Execute the setup script to initialize your SQLite database, volumes, and base configurations:
 
@@ -62,6 +78,9 @@ python setup.py
 
 # 🚀 Start the ISF Engine + Secure AI-Proxy Docker containers
 python start_isf_core.py
+
+# 🛑 Stop the ISF Engine when finished
+python shutdown_isf_core.py
 ```
 
 🎉 Open **`http://localhost:3006`** in your browser! Your personal software department is live.
