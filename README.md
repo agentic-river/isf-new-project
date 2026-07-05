@@ -47,11 +47,18 @@ Before getting started, ensure your system meets the following requirements:
 Ensure you have [Docker Desktop](https://docs.docker.com/get-docker/) installed and running, then spin up your local factory in seconds:
 
 ### Step 1: Click "Use this template" or Clone
-Click the green **"Use this template"** button at the top of this repository on GitHub to create your own private repository, or clone it directly:
+Click the green **"Use this template"** button at the top of this repository on GitHub to create your own private repository with a clean commit history. 
+
+Alternatively, if you prefer to clone it directly via the command line, use the following commands to strip away the template's past commit history:
 
 ```bash
-git clone https://github.com/agentic-river/isf-new-project.git my-ai-project
+# Clone without the full commit history
+git clone --depth 1 https://github.com/agentic-river/isf-new-project.git my-ai-project
 cd my-ai-project
+
+# Remove the template's git history and start fresh
+rm -rf .git
+git init
 ```
 
 ### Step 2: Configure Your API Keys
