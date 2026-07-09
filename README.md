@@ -67,6 +67,7 @@ Set up your AI Proxy credentials to route requests securely to your chosen LLM m
 ```bash
 # Copy the environment example file
 cp .env.ai_proxy.example .env.ai_proxy
+cp .env.sample .env
 
 # Open and add your API keys (e.g., GOOGLE_API_KEY, DEEPSEEK_API_KEY)
 nano .env.ai_proxy
